@@ -4,16 +4,14 @@ function getInitialState() {
         step: 0,
         planets: [],
         fleets: [],
-        players: []
+        players: [],
+        addPlanet: function( position ) {
+            this.planets.push( {
+                id: 0,
+                position: position
+            } );
+        }
     };
-}
-
-function addPlanet( state, position ) {
-    state.planets.push( {
-        id: 0,
-        position: position
-    } );
-    return state;
 }
 
 function advanceState( state ) {
