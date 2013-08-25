@@ -25,15 +25,71 @@ buster.testCase( "getInitialState", {
     }
 } );
 
-buster.testCase( "addPlanet", {
+buster.testCase( "State methods", {
     "setUp": function() {
         this.state = game.getInitialState();
     },
-    "adds a planet object to the state": function() {
-        this.state.addPlanet( { x: 10, y: 10 } );
+    "addPlayer()": function() {
+        var id = this.state.addPlayer( "John Doe");
+        assert.isNumber( id );
+        assert.equals( this.state.players.length, 1 );
+        assert.equals( this.state.players[ 0 ].name, "John Doe");
+        this.state.addPlayer( "Computer 1");
+        assert.equals( this.state.players.length, 2 );
+        assert.equals( this.state.players[ 1 ].name, "Computer 1");
+    },
+    "addPlanet()": function() {
+        var id = this.state.addPlanet( { x: 10, y: 10 }, 1, 10 );
+        assert.isNumber( id );
         assert.equals( this.state.planets.length, 1 );
+        var p = this.state.planets[0];
+        assert.equals( p.owner, 1 );
+        assert.equals( p.position, { x: 10, y: 10 } );
+        assert.equals( p.units, 10 );
+        assert.equals( p.pLevel, 1 );
+        assert.equals( p.dLevel, 1 );
+        assert.equals( p.links.length, 0 );
+    },
+    "linkPlanets()": function() {
+        this.state.addPlanet( { x: 1, y : 1 }, 1, 10 );
+        this.state.addPlanet( { x: 2, y : 2 }, 2, 20 );
+        this.state.linkPlanets( 0, 1 );
+        assert.equals( this.state.planets[ 0 ].links.length, 1 );
+        assert.equals( this.state.planets[ 1 ].links.length, 1 );
+        assert.equals( this.state.planets[ 0 ].links[ 0 ], 1 );
+        assert.equals( this.state.planets[ 1 ].links[ 0 ], 0 );
+    },
+    "upgradeProduction()": function() {
+        var id = this.state.addPlanet( { x: 1, y: 1 }, 1, 10 ),
+            result;
+        assert.equals( this.state.planets[ id ].pLevel, 1 );
+        result = this.state.upgradeProduction( id );
+        assert( result );
+        assert.equals( this.state.planets[ id ].pLevel, 2 );
+        result = this.state.upgradeProduction( id );
+        assert( result );
+        assert.equals( this.state.planets[ id ].pLevel, 3 );
+        result = this.state.upgradeProduction( id );
+        refute( result );
+        assert.equals( this.state.planets[ id ].pLevel, 3 );
+    },
+    "upgradeDefense()": function() {
+        var id = this.state.addPlanet( { x: 1, y: 1 }, 1, 10 ),
+            result;
+        assert.equals( this.state.planets[ id ].dLevel, 1 );
+        result = this.state.upgradeDefense( id );
+        assert( result );
+        assert.equals( this.state.planets[ id ].dLevel, 2 );
+        result = this.state.upgradeDefense( id );
+        assert( result );
+        assert.equals( this.state.planets[ id ].dLevel, 3 );
+        result = this.state.upgradeDefense( id );
+        refute( result );
+        assert.equals( this.state.planets[ id ].dLevel, 3 );
+
     }
 } );
+
 buster.testCase( "advanceState", {
     "setUp": function() {
         this.state = game.getInitialState();
