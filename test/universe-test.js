@@ -30,7 +30,7 @@ buster.testCase( "addPlanet", {
         this.state = game.getInitialState();
     },
     "adds a planet object to the state": function() {
-        this.state = game.addPlanet( this.state, { x: 10, y: 10 } );
+        this.state.addPlanet( { x: 10, y: 10 } );
         assert.equals( this.state.planets.length, 1 );
     }
 } );

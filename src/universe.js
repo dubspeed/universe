@@ -21,6 +21,5 @@ function advanceState( state ) {
 
 module.exports = {
     getInitialState: getInitialState,
-    advanceState: advanceState,
-    addPlanet: addPlanet
+    advanceState: advanceState
 };
