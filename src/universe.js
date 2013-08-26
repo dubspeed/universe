@@ -2,6 +2,12 @@
 var MAX_PLEVEL = 3;
 var MAX_DLEVEL = 3;
 
+var PRODUCTIONRATE = {
+    1: 1.0,
+    2: 1.5,
+    3: 2.0
+};
+
 function getInitialState() {
     return {
         step: 0,
@@ -50,8 +56,16 @@ function getInitialState() {
     };
 }
 
+function advancePlanets( state ) {
+    for ( var i = 0, j = state.planets.length; i < j; i++ ) {
+        var planet = state.planets[ i ];
+        planet.units += 1 * PRODUCTIONRATE[ planet.pLevel ];
+    }
+}
+
 function advanceState( state ) {
     state.step += 1;
+    advancePlanets( state );
     return state;
 }
 

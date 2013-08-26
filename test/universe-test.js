@@ -93,6 +93,8 @@ buster.testCase( "State methods", {
 buster.testCase( "advanceState", {
     "setUp": function() {
         this.state = game.getInitialState();
+        this.player1= this.state.addPlayer( "John Doe" );
+        this.planet1 = this.state.addPlanet( { x: 1, y: 1 }, this.player1, 0 );
     },
     "accepts and returns a state": function() {
         var newState = game.advanceState( this.state );
@@ -104,5 +106,17 @@ buster.testCase( "advanceState", {
         assert.equals( newState.step, 1 );
         newState = game.advanceState( this.state );
         assert.equals( newState.step, 2 );
+    },
+    "advances units of planets": function() {
+        var newState = game.advanceState( this.state );
+        assert.equals( newState.planets[ this.planet1 ].units, 1 );
+    },
+    "advances units of planets with different production levels": function() {
+        this.state.upgradeProduction( this.planet1 );
+        var newState = game.advanceState( this.state );
+        assert.equals( newState.planets[ this.planet1 ].units, 1.5 );
+        this.state.upgradeProduction( this.planet1 );
+        newState = game.advanceState( this.state );
+        assert.equals( newState.planets[ this.planet1 ].units, 3.5 );
     }
 } );
