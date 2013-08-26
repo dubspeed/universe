@@ -86,7 +86,39 @@ buster.testCase( "State methods", {
         result = this.state.upgradeDefense( id );
         refute( result );
         assert.equals( this.state.planets[ id ].dLevel, 3 );
-
+    },
+    "sendFleet()": {
+        "setUp": function() {
+            this.pl1 = this.state.addPlayer( "John Doe" );
+            this.p1 = this.state.addPlanet( { x: 1, y: 1 }, this.pl1, 10 ),
+            this.p2 = this.state.addPlanet( { x: 2, y: 2 }, this.pl1, 10 ),
+            this.state.linkPlanets( this.p1, this.p2 );
+        },
+        "creates a fleet in the state": function() {
+            var id = this.state.sendFleet( this.p1, this.p2 );
+            assert.isNumber( id );
+            assert.equals( this.state.fleets.length, 1 );
+            var fleet = this.state.fleets[ id ];
+            assert.equals( fleet.source, this.p1 );
+            assert.equals( fleet.destination, this.p2 );
+            assert.equals( fleet.startStep, this.state.step );
+        },
+        "reduces the source planet units": function() {
+            var p1 = this.state.planets[ this.p1 ],
+                oldUnits = p1.units,
+                id = this.state.sendFleet( this.p1, this.p2 ),
+                fleet = this.state.fleets[ id ];
+            assert.equals( fleet.units, oldUnits );
+            assert.equals( p1.units, 0 );
+        },
+        "caclulates the correct distance": function() {
+            var id = this.state.sendFleet( this.p1, this.p2 );
+            assert.equals( this.state.fleets[ id ].distance, 1.4142135623730951 );
+        },
+        "arrivalStep is correct": function() {
+            var id = this.state.sendFleet( this.p1, this.p2 );
+            assert.equals( this.state.fleets[ id ].arrivalStep, 2 );
+        }
     }
 } );
 

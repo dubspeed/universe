@@ -8,6 +8,8 @@ var PRODUCTIONRATE = {
     3: 2.0
 };
 
+var FLEET_SPEED = 1;
+
 function getInitialState() {
     return {
         step: 0,
@@ -51,6 +53,24 @@ function getInitialState() {
                 return true;
             }
             return false;
+        },
+        sendFleet: function( planetIdSrc, planetIdDest ) {
+            var p1 = this.planets[ planetIdSrc ].position,
+                p2 = this.planets[ planetIdDest ].position,
+                xdist = p1.x - p2.x,
+                ydist = p1.y - p2.y,
+                dist = Math.sqrt( ( xdist * xdist ) + ( ydist * ydist ) );
+            //console.log( dist );
+            this.fleets.push( {
+                source: planetIdSrc,
+                destination: planetIdDest,
+                startStep: this.step,
+                distance: dist,
+                arrivalStep: Math.ceil( dist / FLEET_SPEED ),
+                units: this.planets[ planetIdSrc ].units
+            } );
+            this.planets[ planetIdSrc ].units = 0;
+            return this.fleets.length - 1;
         }
 
     };
